@@ -1,0 +1,269 @@
+<!doctype html>
+<html style="margin: 0; padding: 0;">
+  <head>  
+  </head>
+
+  <style>
+    html, body{
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .outer{
+        width: 100%;
+        height: 99vh;
+        /* background-color: red; */
+        padding-top: 6px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+    .dropdowncontainer{
+        width: 100%;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    #years{
+      width: 10%;
+      background-color: gray;
+      color: aliceblue;
+      margin-bottom: 5px;
+    }
+    #year{
+      color: grey;
+    }
+    .result{
+      width: 95%;
+      border: 2px dashed gray;
+      height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px;
+    }
+    .res{
+      width: 95%;
+      height: 30px;
+      margin: 5px;
+      display: flex;
+      /* border: 2px solid greenyellow; */
+    }
+    .res:hover{
+      font-weight: bold;
+      font-size:larger;
+      font-style: italic;
+    }
+    .res .country{
+      width: 20%;
+      /* border: 2px solid blue; */
+      text-align: center;
+    }
+    .res .progressbar{
+      width: 60%;
+      /* border: 2px solid orange; */
+    }
+    .res .population{
+      text-align: right;
+      /* border: 2px solid blueviolet; */
+      width: 20%;
+    }
+    #progressbar1,#progressbar2,#progressbar3,#progressbar4,#progressbar5,#progressbar6,#progressbar7,#progressbar8,#progressbar9,#progressbar10{
+      border-radius:0 5px 5px 0;
+      display: none;
+    }
+  </style>
+
+  <body style="margin: 0; padding: 0;">
+    <div class="outer">
+      <div class="dropdowncontainer">
+        <select name="years" id="years" onchange="changeYear();">
+        </select>
+        <div id="year"></div>
+      </div>
+      <div class="result">
+    <div class="res">
+      <span class="country" id="country1"></span>
+      <span class="progressbar">
+        <div id="progressbar1">1</div>
+      </span>
+      <span class="population" id="population1"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country2"></span>
+      <span class="progressbar">
+        <div id="progressbar2">2</div>
+      </span>
+      <span class="population" id="population2"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country3"></span>
+      <span class="progressbar">
+        <div id="progressbar3">3</div>
+      </span>
+      <span class="population" id="population3"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country4"></span>
+      <span class="progressbar">
+        <div id="progressbar4">4</div>
+      </span>
+      <span class="population" id="population4"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country5"></span>
+      <span class="progressbar">
+        <div id="progressbar5">5</div>
+      </span>
+      <span class="population" id="population5"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country6"></span>
+      <span class="progressbar">
+        <div id="progressbar6">6</div>
+      </span>
+      <span class="population" id="population6"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country7"></span>
+      <span class="progressbar">
+        <div id="progressbar7">7</div>
+      </span>
+      <span class="population" id="population7"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country8"></span>
+      <span class="progressbar">
+        <div id="progressbar8">8</div>
+      </span>
+      <span class="population" id="population8"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country9"></span>
+      <span class="progressbar">
+        <div id="progressbar9">9</div>
+      </span>
+      <span class="population" id="population9"></span>
+    </div>
+    <div class="res">
+      <span class="country" id="country10"></span>
+      <span class="progressbar">
+        <div id="progressbar10">10</div>
+      </span>
+      <span class="population" id="population10"></span>
+    </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    var years  = document.getElementById("years");
+    for(let i=2018; i>=1960; i--){
+        var option = document.createElement('option');
+        option.text = i;
+        option.value = i;
+        years.append(option);
+    }
+
+    async function population(j, selectedYear){
+      let res = await fetch("https://codejudge-question-artifacts.s3.ap-south-1.amazonaws.com/poplution-countries-yearwise.json");
+      let data = await res.json();
+      // console.log(data);   
+      console.log('yr: ', j);
+            
+      document.getElementById('year').innerText = j;
+
+          var resultYearPopulation = [];
+          var resultYearCountry = [];
+          for(let i=0; i<data.length; i++){
+            if(data[i].Year == j){
+              resultYearPopulation.push(data[i].Value);
+              resultYearCountry.push(data[i]["Country Name"]);
+            }
+          }
+
+          for ( let i = 0; i < resultYearPopulation.length - 1; i++ )
+            {
+                for ( let j = 0; j < resultYearPopulation.length - i - 1; j++ )
+                {
+                    if ( resultYearPopulation[ j ] < resultYearPopulation[ j + 1 ] )
+                    {
+                        [resultYearPopulation[j], resultYearPopulation[j+1]] = [resultYearPopulation[j+1], resultYearPopulation[j]];
+                        [resultYearCountry[j], resultYearCountry[j+1]] = [resultYearCountry[j+1], resultYearCountry[j]];
+                    }
+                }
+            }
+
+          // console.log('resultYearPopulation: ',resultYearPopulation);
+          // console.log('resultYearCountry: ',resultYearCountry);
+
+          for(let i=0; i<10; i++){
+            document.getElementById(`country${i+1}`).innerText = resultYearCountry[i];
+            document.getElementById(`population${i+1}`).innerText = resultYearPopulation[i];
+            let max = resultYearPopulation[0];
+            let per = ((100*resultYearPopulation[i])/max);
+            // console.log(per);
+            if (per>=95) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(219, 5, 23)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(219, 5, 23)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(219, 5, 23)`;              
+            } else if (per>80 && per<95) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(231, 77, 6)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(231, 77, 6)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(231, 77, 6)`;              
+            } else if (per>70 && per<80) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(231, 197, 6)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(231, 197, 6)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(231, 197, 6)`;              
+            } else if (per>60 && per<70) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(238, 234, 2)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(238, 234, 2)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(238, 234, 2)`;              
+            } else if (per>50 && per<60) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(235, 255, 59)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(235, 255, 59)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(235, 255, 59)`;              
+            } else if (per>40 && per<50) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(178, 255, 34)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(178, 255, 34)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(178, 255, 34)`;              
+            } else if (per>30 && per<40) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(124, 250, 21)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(124, 250, 21)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(124, 250, 21)`;              
+            } else if (per>20 && per<30) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(40, 250, 21)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(40, 250, 21)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(40, 250, 21)`;              
+            } else if (per>10 && per<20) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(4, 211, 21)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(4, 211, 21)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(4, 211, 21)`;              
+            } else if (per<=10) {
+              document.getElementById(`country${i+1}`).style.color = `rgb(9, 182, 32)`; 
+              document.getElementById(`progressbar${i+1}`).style.color = `rgb(9, 182, 32)`;
+              document.getElementById(`progressbar${i+1}`).style.backgroundColor = `rgb(9, 182, 32)`;              
+            }
+            document.getElementById(`progressbar${i+1}`).style.width = `${per}%`;
+            document.getElementById(`progressbar${i+1}`).style.display = "block";
+          }
+
+      if(j<selectedYear){
+            j++;
+        setTimeout(() => {  
+            population(j, selectedYear);
+        }, 100);
+      }
+    } 
+
+    function changeYear(){
+      // console.log(years.value);
+      var selectedYear = years.value;
+      document.getElementById('year').innerText = selectedYear;
+      population(1960, selectedYear);
+    };
+
+  </script>
+
+</html>
